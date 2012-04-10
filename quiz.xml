@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<quiz>
+	<quiztitle>
+		The Pumpkin Quiz
+	</quiztitle>
+	<question>
+		<body>
+			Hugli’s Blueberry Ranch near Pembroke has an annual pumpkin growing contest. In 2011 the heaviest pumpkin weighed:
+		</body>
+		<response>
+			<answer>1,129 pounds</answer>
+			<value>false</value>
+		</response>
+		<response>
+			<answer>1,057 pounds</answer>
+			<value>false</value>
+		</response>
+		<response>
+			<answer>1,312 pounds</answer>
+			<value>true</value>
+		</response>
+	</question>
+
+	<question>
+		<body>
+			Where was the winning 2011 pumpkin in the Hugli’s contest grown?</body>
+		<response>
+			<answer> Shawville, Quebec </answer>
+			<value>false</value>
+		</response>
+		<response>
+			<answer> Ormstown, Quebec </answer>
+			<value>true</value>
+		</response>
+		<response>
+			<answer> Pembroke, Ontario </answer>
+			<value> false </value>
+		</response>
+	</question>
+	
+	<question>
+		<body>
+			What is the 2011 world record weight for a pumpkin?
+		</body>
+		<response>
+			<answer>1818.5 pounds </answer>
+			<value> true </value>
+		</response>
+		<response>
+			<answer>2013.8 pounds </answer>
+			<value>false</value>
+		</response>
+		<response>
+			<answer>1756.4 pounds</answer>
+			<value> false </value>
+		</response>
+		<errata>
+			The largest pumpkin in the world was grown by the Bryson family in Ormstown, Quebec. 
+		</errata>
+	</question>
+</quiz>
