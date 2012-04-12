@@ -26,6 +26,7 @@
 		private var titleFormat:TextFormat = new TextFormat();
 		private var answerText:TextField;
 		private var correct:String = 'a';
+		private var pages:Array = new Array();
 //		private var s:MovieClip = new MovieClip();
 //		private var s:Slide;
 //		private var ans_mc:answer_mc;
@@ -50,13 +51,7 @@ trace('in function getData: ');
 			quizXML = XML(ev.target.data);			// load the array with the data from the XML file
 			numTitle = quizXML.quiztitle.length();	// number of level1 tags in the XML file
 			numQuestion = quizXML.question.length();	// number of level1 tags in the XML file
-trace('numTitle: ', numTitle);
-trace('numQuestion: ', numQuestion);
-//			var quizAttributes:XMLList = quizXML.question.body.attributes();
-//trace('quizAttributes: ', quizAttributes);
-
-
-			trace('Title : ',  quizXML.quiztitle.text());
+trace('Title : ',  quizXML.quiztitle.text());
 
 			// add the title to the stage
 			titleText.width = 500;
@@ -78,58 +73,48 @@ trace('numQuestion: ', numQuestion);
 				s = new slide;
 				s.myNumber = i + 1;
 				correct = quizXML.question[i].body.@correct;
-				trace('correct: ', correct);
+//				trace('correct: ', correct);
 				s.x = 15;
 				s.y = 50;
-				s.visible = true;
-				// s.addEventListener(MouseEvent.CLICK, nextSlide);
 				addChild(s);
+				trace('s.name: ', s.name);
+				trace('s.myNumber: ', s.myNumber);
+				pages[i+1] = s.name;
 			
 				// Now fill up the slide with the data from the xml file
 				// first add the question title
-	//			var questTxt:TextField = new TextField();
-	//			questTxt.text = 'Question Number ' + String(i + 1);
-	//			questTxt.wordWrap = true;
-	//			questTxt.width = 500;
-	//			questTxt.height = 100;
-	//			questTxt.x = 0;
-	//			questTxt.y = 0;
-	//			questTxt.setTextFormat(ttf);
-	//			ttf.size = 20;
-	//			s.addChild(questTxt);
-				
 				
 				trace('Question ' + (i+1) +': ',  quizXML.question[i].body.text());
-				questionText.text = quizXML.question[i].body.text();
+				var at:answer_mc = new answer_mc();
+				at.answerText.text = (i+1) + '. ' + quizXML.question[i].body.text();
+trace('at.questionText: ', at.answerText);
 				
-				questionText.wordWrap = true;
-				questionText.width = 450;
-				questionText.height = 100;
-				questionText.x = 15;
-				questionText.y = 5;
-				
+				at.answerText.wordWrap = true;
+				at.answerText.width = 480;
+				at.answerText.height = 90;
+				at.answerText.x = 5;
+				at.answerText.y = 5;
+		trace('1: ');		
 				qtf.size = 20;
 				qtf.color = 0xff0000;
-				questionText.setTextFormat(qtf);
+				at.answerText.setTextFormat(qtf);
 				
-				s.addChild(questionText);
-				
+				s.addChild(at);
 				
 				var numresponse:Number = quizXML.question[i].response.answer.length();
-				trace('numresponse: ', numresponse);
+//				trace('numresponse: ', numresponse);
 				
-				var ansTxt:Number = questionText.y;
+				var ansTxt:Number = at.answerText.y + at.answerText.height - 45;
+				trace('y: ', at.answerText.y,  at.answerText.height);
 				var ab:answer_mc;
 				for (var t:Number = 0; t <= numresponse - 1; t++) {
-					trace('t: , numresponse - 1: ', t,  numresponse - 1);
+//					trace('t: , numresponse - 1: ', t,  numresponse - 1);
 					ab = new answer_mc();
 //					answerText = new TextField();
-					trace('Response ' + (t+1) +': ',  quizXML.question[i].response.answer[t].text());
+//					trace('Response ' + (t+1) +': ',  quizXML.question[i].response.answer[t].text());
 					var ansLetter:String = quizXML.question[i].response.answer[t].@letter;
-trace('ansLetter: ', ansLetter);
-//					ab.answerText.text = ansLetter + '. ' + quizXML.question[i].response.answer[t].text();
-					ab.answerText.text = 'this is test text one two three four five six seven eight nine.';
-trace('a.answerText.text: ', ab.answerText.text);
+					ab.answerText.text = ansLetter + '. ' + quizXML.question[i].response.answer[t].text();
+//					ab.answerText.text = 'this is test text one two three four five six seven eight nine.';
 					ab.answerText.wordWrap = true;
 					ab.answerText.width = 470;
 					ab.answerText.height = 30;
@@ -137,22 +122,31 @@ trace('a.answerText.text: ', ab.answerText.text);
 					ab.y = ansTxt + 45;
 					ansTxt = ab.y;
 //					a.answerText = answerText.y
+					ttf.size = 20;
 					ab.answerText.setTextFormat(ttf);
-					ttf.size = 15;
 					s.addChild(ab);
-					trace('s: ', s);
-					trace('s.ab: ', s.ab);
+//					trace('s: ', s);
+//					trace('s.ab: ', s.ab);
 					if (ansLetter == correct) {
 						ab.correct = correct;
 					}
-trace('ab.correct: ', ab.correct);					
+//trace('ab.correct: ', ab.correct);					
 					ab.name = "answer_" + ansLetter;
 					ab.buttonMode = true;
+					ab.mouseChildren = false;
 					ab.addEventListener(MouseEvent.CLICK, checkAnswer);
 
-trace('s.a.answerText.text: ', ab.answerText.text);
-
 				} // endfor
+				
+				if(i == 0){
+				s.visible = true;
+				trace('i: ', i);
+				trace('s.visible: ', s.visible);
+				} else {
+				s.visible = false;
+				trace('i: ', i);
+				trace('s.visible: ', s.visible);
+				}
 				
 			} // endfor
 
@@ -168,6 +162,43 @@ trace('in function xmlError: ');
 		} // end function xmlError
 		
 		
+		public function nextSlide(ev:MouseEvent) {
+trace('in function nextSlide: ');
+			var test:slide = slide(ev.currentTarget.parent);
+			test.visible = false;
+			var pagesLength = pages.length;
+			trace('test.myNumber: ', test.myNumber);
+			var curPage = test.myNumber;
+			trace('pagesLength', pagesLength);
+var tmp:String;
+for(var i:int = 0; i < this.numChildren; i++) {
+    if(this.getChildAt(i) is MovieClip) {
+        trace('(this.getChildAt(i): ', this.getChildAt(i));
+		tmp = this.getChildAt(i).name;
+		trace('tmp: ', tmp);// do something
+		if (i !=curPage + 1) {
+		this.getChildAt(i).visible = false;
+		} else {
+		this.getChildAt(i).visible = true;
+	
+		}
+    }
+}
+
+
+
+
+//for (var i:Number = 1; i <= pagesLength - 1; i++) {
+//				trace('pages['+i+']: ', pages[i]);
+//			} // endfor
+//			trace('pages[1]: ', pages[1]);
+//			
+//			trace('ev.myNumber: ', test.myNumber);
+//			trace('ev.name: ', test.name);
+			test.visible = false;
+} // end function xmlError
+		
+		
 		public function error404(ev) {
 trace('in function error404: ');
 			
@@ -176,10 +207,21 @@ trace('in function error404: ');
 		public function checkAnswer(ev) {
 trace('in function checkAnswer: ');
 			var test:answer_mc = answer_mc(ev.currentTarget);
-			trace('test: ', test);
-			trace('test.text: ', test.answerText.text);
-			trace('test.correct: ', test.correct);
-		} // end function error404
+//			trace('test: ', test);
+//			trace('test.correct: ', test.correct);
+			if (test.correct) {
+		trace('the correct selection was made');
+		// remove event listener
+		
+		// go to next slide
+			nextSlide(ev);
+		
+			} // endif
+		trace('the incorrect selection was made');
+			
+			
+			//after checking answer and deciding to move on
+		} // end function checkAnswer
 		
 		
 		
