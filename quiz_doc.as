@@ -25,8 +25,10 @@
 		private var questionText:TextField = new TextField();
 		private var titleFormat:TextFormat = new TextFormat();
 		private var answerText:TextField;
-		private var s:MovieClip = new MovieClip();
-		private var answer_mc:MovieClip;
+		private var correct:String = 'a';
+//		private var s:MovieClip = new MovieClip();
+//		private var s:Slide;
+//		private var ans_mc:answer_mc;
 		
 		
 		public function quiz_doc() {
@@ -50,9 +52,8 @@ trace('in function getData: ');
 			numQuestion = quizXML.question.length();	// number of level1 tags in the XML file
 trace('numTitle: ', numTitle);
 trace('numQuestion: ', numQuestion);
-var quizAttributes:XMLList = quizXML.question.body.attributes();
-trace('quizAttributes: ', quizAttributes);
-trace('quizXML.body.attributes.correct: ', quizXML..body[0].@correct);
+//			var quizAttributes:XMLList = quizXML.question.body.attributes();
+//trace('quizAttributes: ', quizAttributes);
 
 
 			trace('Title : ',  quizXML.quiztitle.text());
@@ -72,39 +73,40 @@ trace('quizXML.body.attributes.correct: ', quizXML..body[0].@correct);
 			addChild(titleText);
 			
 			/// set up a new slide for each of the questions
-				var s:slide;
+			var s:slide;
 			for (var i:Number = 0; i <= numQuestion - 1; i++) {
 				s = new slide;
 				s.myNumber = i + 1;
-				s.correct = quizXML.question[i].body.@correct;
-				trace('s.correct: ', s.correct);
+				correct = quizXML.question[i].body.@correct;
+				trace('correct: ', correct);
 				s.x = 15;
 				s.y = 50;
 				s.visible = true;
 				// s.addEventListener(MouseEvent.CLICK, nextSlide);
 				addChild(s);
-				
+			
 				// Now fill up the slide with the data from the xml file
-				var questTxt:TextField = new TextField();
-				questTxt.text = 'Question Number ' + String(i + 1);
-				questTxt.wordWrap = true;
-				questTxt.width = 500;
-				questTxt.height = 100;
-				questTxt.x = 0;
-				questTxt.y = 0;
-				questTxt.setTextFormat(ttf);
-				ttf.size = 20;
-				s.addChild(questTxt);
+				// first add the question title
+	//			var questTxt:TextField = new TextField();
+	//			questTxt.text = 'Question Number ' + String(i + 1);
+	//			questTxt.wordWrap = true;
+	//			questTxt.width = 500;
+	//			questTxt.height = 100;
+	//			questTxt.x = 0;
+	//			questTxt.y = 0;
+	//			questTxt.setTextFormat(ttf);
+	//			ttf.size = 20;
+	//			s.addChild(questTxt);
 				
 				
 				trace('Question ' + (i+1) +': ',  quizXML.question[i].body.text());
 				questionText.text = quizXML.question[i].body.text();
 				
 				questionText.wordWrap = true;
-				questionText.width = 500;
+				questionText.width = 450;
 				questionText.height = 100;
 				questionText.x = 15;
-				questionText.y = 25;
+				questionText.y = 5;
 				
 				qtf.size = 20;
 				qtf.color = 0xff0000;
@@ -117,26 +119,38 @@ trace('quizXML.body.attributes.correct: ', quizXML..body[0].@correct);
 				trace('numresponse: ', numresponse);
 				
 				var ansTxt:Number = questionText.y;
+				var ab:answer_mc;
 				for (var t:Number = 0; t <= numresponse - 1; t++) {
-					a_mc = new answer_mc;
-					answerText = new TextField();
+					trace('t: , numresponse - 1: ', t,  numresponse - 1);
+					ab = new answer_mc();
+//					answerText = new TextField();
 					trace('Response ' + (t+1) +': ',  quizXML.question[i].response.answer[t].text());
 					var ansLetter:String = quizXML.question[i].response.answer[t].@letter;
-					
-					answerText.text = ansLetter + '. ' + quizXML.question[i].response.answer[t].text();
-					answerText.wordWrap = true;
-					answerText.width = 500;
-					answerText.height = 100;
-					answerText.x = 15;
-					answerText.y = ansTxt + 25;
-					ansTxt = answerText.y
-					answerText.setTextFormat(ttf);
-					ttf.size = 20;
-					answerText.name = "answer_" + ansLetter;
-//					answerText.buttonMode = true;
-					answerText.addEventListener(MouseEvent.CLICK, checkAnswer);
+trace('ansLetter: ', ansLetter);
+//					ab.answerText.text = ansLetter + '. ' + quizXML.question[i].response.answer[t].text();
+					ab.answerText.text = 'this is test text one two three four five six seven eight nine.';
+trace('a.answerText.text: ', ab.answerText.text);
+					ab.answerText.wordWrap = true;
+					ab.answerText.width = 470;
+					ab.answerText.height = 30;
+					ab.x = 15;
+					ab.y = ansTxt + 45;
+					ansTxt = ab.y;
+//					a.answerText = answerText.y
+					ab.answerText.setTextFormat(ttf);
+					ttf.size = 15;
+					s.addChild(ab);
+					trace('s: ', s);
+					trace('s.ab: ', s.ab);
+					if (ansLetter == correct) {
+						ab.correct = correct;
+					}
+trace('ab.correct: ', ab.correct);					
+					ab.name = "answer_" + ansLetter;
+					ab.buttonMode = true;
+					ab.addEventListener(MouseEvent.CLICK, checkAnswer);
 
-					s.addChild(answerText);
+trace('s.a.answerText.text: ', ab.answerText.text);
 
 				} // endfor
 				
@@ -161,7 +175,10 @@ trace('in function error404: ');
 		
 		public function checkAnswer(ev) {
 trace('in function checkAnswer: ');
-			
+			var test:answer_mc = answer_mc(ev.currentTarget);
+			trace('test: ', test);
+			trace('test.text: ', test.answerText.text);
+			trace('test.correct: ', test.correct);
 		} // end function error404
 		
 		
