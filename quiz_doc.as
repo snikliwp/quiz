@@ -10,8 +10,6 @@
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 
-// Status back from the server
-	
 	
 	public class quiz_doc extends MovieClip {
 
@@ -22,19 +20,17 @@
 		private	var numTitle:Number;	// number of title tags in the XML file
 		private	var numQuestion:Number;	// number of question tags in the XML file
 		private var titleText:TextField = new TextField();
-		private var questionText:TextField = new TextField();
 		private var titleFormat:TextFormat = new TextFormat();
-		private var answerText:TextField;
 		private var correct:String = 'a';
 		private var pages:Array = new Array();
-//		private var s:MovieClip = new MovieClip();
-//		private var s:Slide;
-//		private var ans_mc:answer_mc;
+		private var yPos:Number = 0;
 		
 		
 		public function quiz_doc() {
-trace('in function quiz_doc: ');
 			// constructor code
+			sorry_mc.visible = false;
+			gameOver_mc.visible = false;
+			
 			req = new URLRequest(quizFileXML);									// Set up to get the xml data 
 			xmlLoader = new URLLoader();										// Set up to get the images
 			xmlLoader.addEventListener(Event.COMPLETE, getData);				// Event Listener for successful Completion
@@ -47,11 +43,9 @@ trace('in function quiz_doc: ');
 		
 		
 		public function getData(ev) {
-trace('in function getData: ');
 			quizXML = XML(ev.target.data);			// load the array with the data from the XML file
 			numTitle = quizXML.quiztitle.length();	// number of level1 tags in the XML file
 			numQuestion = quizXML.question.length();	// number of level1 tags in the XML file
-trace('Title : ',  quizXML.quiztitle.text());
 
 			// add the title to the stage
 			titleText.width = 500;
@@ -59,171 +53,149 @@ trace('Title : ',  quizXML.quiztitle.text());
 			titleText.x = 15;
 			titleText.y = 15;
 			titleText.text = quizXML.quiztitle.text();
-			var ttf:TextFormat = new TextFormat();
-			var qtf:TextFormat = new TextFormat();
-			var atf:TextFormat = new TextFormat();
+			var ttf:TextFormat = new TextFormat(); // format for the title
+			var qtf:TextFormat = new TextFormat(); // format for the question
+			var atf:TextFormat = new TextFormat(); // format for the responses
 			ttf.size = 25;
 			ttf.color = 0x000000;
 			titleText.setTextFormat(ttf);
 			addChild(titleText);
+			
+			// load the erratta into the gameover page
+			gameOver_mc.gameOverText.text = quizXML.errata.text();
 			
 			/// set up a new slide for each of the questions
 			var s:slide;
 			for (var i:Number = 0; i <= numQuestion - 1; i++) {
 				s = new slide;
 				s.myNumber = i + 1;
-				correct = quizXML.question[i].body.@correct;
-//				trace('correct: ', correct);
+				correct = quizXML.question[i].body.@correct; // put the correct response in a variable for later use
 				s.x = 15;
 				s.y = 50;
 				addChild(s);
-				trace('s.name: ', s.name);
-				trace('s.myNumber: ', s.myNumber);
-				pages[i+1] = s.name;
+				pages[i] = s.name; // put the name in the arrray
 			
 				// Now fill up the slide with the data from the xml file
-				// first add the question title
+				// first add the question 
 				
-				trace('Question ' + (i+1) +': ',  quizXML.question[i].body.text());
-				var at:answer_mc = new answer_mc();
-				at.answerText.text = (i+1) + '. ' + quizXML.question[i].body.text();
-trace('at.questionText: ', at.answerText);
-				
+				var at:answer_mc = new answer_mc(); // create a new question movie clip
+				at.answerText.text = (i+1) + '. ' + quizXML.question[i].body.text(); // put the text in it
+				// format the text
 				at.answerText.wordWrap = true;
 				at.answerText.width = 480;
 				at.answerText.height = 90;
 				at.answerText.x = 5;
 				at.answerText.y = 5;
-		trace('1: ');		
 				qtf.size = 20;
 				qtf.color = 0xff0000;
 				at.answerText.setTextFormat(qtf);
-				
+				// stick the question clip into the slide
 				s.addChild(at);
 				
+				// how may responses are we dealing with
 				var numresponse:Number = quizXML.question[i].response.answer.length();
-//				trace('numresponse: ', numresponse);
-				
-				var ansTxt:Number = at.answerText.y + at.answerText.height - 45;
-				trace('y: ', at.answerText.y,  at.answerText.height);
+				// set up the y position for the first response
+				yPos = at.answerText.y + at.answerText.height - 45;
 				var ab:answer_mc;
 				for (var t:Number = 0; t <= numresponse - 1; t++) {
-//					trace('t: , numresponse - 1: ', t,  numresponse - 1);
-					ab = new answer_mc();
-//					answerText = new TextField();
-//					trace('Response ' + (t+1) +': ',  quizXML.question[i].response.answer[t].text());
+					ab = new answer_mc(); // create a new response clip
+					// put the response letter and number into it
 					var ansLetter:String = quizXML.question[i].response.answer[t].@letter;
 					ab.answerText.text = ansLetter + '. ' + quizXML.question[i].response.answer[t].text();
-//					ab.answerText.text = 'this is test text one two three four five six seven eight nine.';
+					// format it
 					ab.answerText.wordWrap = true;
 					ab.answerText.width = 470;
 					ab.answerText.height = 30;
 					ab.x = 15;
-					ab.y = ansTxt + 45;
-					ansTxt = ab.y;
-//					a.answerText = answerText.y
+					ab.y = yPos + 45; // move the y position down a bit 
+					yPos = ab.y; // update the y position
 					ttf.size = 20;
 					ab.answerText.setTextFormat(ttf);
+					// add the response into the slide
 					s.addChild(ab);
-//					trace('s: ', s);
-//					trace('s.ab: ', s.ab);
+					// if this is the correct response store that so we can use it later
 					if (ansLetter == correct) {
 						ab.correct = correct;
-					}
-//trace('ab.correct: ', ab.correct);					
+						} // end if
+					// give it a name
 					ab.name = "answer_" + ansLetter;
 					ab.buttonMode = true;
 					ab.mouseChildren = false;
 					ab.addEventListener(MouseEvent.CLICK, checkAnswer);
-
 				} // endfor
-				
+				// if this is the first page make it visible, otherwise turn off the visibility
 				if(i == 0){
 				s.visible = true;
-				trace('i: ', i);
-				trace('s.visible: ', s.visible);
 				} else {
 				s.visible = false;
-				trace('i: ', i);
-				trace('s.visible: ', s.visible);
-				}
+				} // end else
 				
 			} // endfor
-
-
-//			numTourist = menuXML.tourist.length();	// number of level1 tags in the XML file
 
 		} // end function getData
 		
 		
 		public function xmlError(ev) {
-trace('in function xmlError: ');
-			
 		} // end function xmlError
 		
 		
 		public function nextSlide(ev:MouseEvent) {
-trace('in function nextSlide: ');
+			// turn off the sorry clip
+			sorry_mc.visible = false;
+			// set up the parent of the target which should be the slide
 			var test:slide = slide(ev.currentTarget.parent);
-			test.visible = false;
+			// how many slides are there?
 			var pagesLength = pages.length;
-			trace('test.myNumber: ', test.myNumber);
+			// what number is the current slide
 			var curPage = test.myNumber;
-			trace('pagesLength', pagesLength);
-var tmp:String;
-for(var i:int = 0; i < this.numChildren; i++) {
-    if(this.getChildAt(i) is MovieClip) {
-        trace('(this.getChildAt(i): ', this.getChildAt(i));
-		tmp = this.getChildAt(i).name;
-		trace('tmp: ', tmp);// do something
-		if (i !=curPage + 1) {
-		this.getChildAt(i).visible = false;
-		} else {
-		this.getChildAt(i).visible = true;
-	
-		}
-    }
-}
-
-
-
-
-//for (var i:Number = 1; i <= pagesLength - 1; i++) {
-//				trace('pages['+i+']: ', pages[i]);
-//			} // endfor
-//			trace('pages[1]: ', pages[1]);
-//			
-//			trace('ev.myNumber: ', test.myNumber);
-//			trace('ev.name: ', test.name);
-			test.visible = false;
+			
+			var tmp:String;
+			var tmpNum:String;
+			var tmpClip:MovieClip;
+			if(curPage < pagesLength) { // if we haven't exceeded the total number of pages
+				for(var i:int = 0; i < this.numChildren; i++) { // loop through all the objects on the stage
+					if(this.getChildAt(i) is MovieClip) { // if the object is a movie clip it could be a slide
+						tmp = this.getChildAt(i).name; // get the objects name
+						tmpClip = this.getChildAt(i) as MovieClip; // make it into a movieclip so we can get at its poperties
+						tmpNum = tmpClip.myNumber; // get the clips number
+						if(tmp == 'congrats_mc' || tmp == 'sorry_mc' || tmp == 'gameOver_mc') { // so if the name is one of these
+							// don't do anything these aren't pages
+						} else { // instead 
+							if(tmpNum == curPage + 1){ // turn the next page on
+								this.getChildAt(i).visible = true;
+							} else {  // and the others off
+								this.getChildAt(i).visible = false;
+							} // end else
+						}  // end else
+					} // end if
+				} // end for
+			} else { // if we are at the end of the questions
+				for(var t:int = 0; t < this.numChildren; t++) { // loop through all the objects on the stage
+					if(this.getChildAt(t) is MovieClip) { // if the object is a movie clip it could be a slide
+						tmpClip = this.getChildAt(t) as MovieClip; // make it into a movieclip so we can get at its poperties
+						tmpClip.visible = false; // turn it off I don't care
+					} // end if
+				} // end for
+				// turn on the end game page, it's all over now
+				gameOver_mc.visible = true;
+			} // end else
 } // end function xmlError
 		
 		
 		public function error404(ev) {
-trace('in function error404: ');
-			
 		} // end function error404
 		
 		public function checkAnswer(ev) {
-trace('in function checkAnswer: ');
-			var test:answer_mc = answer_mc(ev.currentTarget);
-//			trace('test: ', test);
-//			trace('test.correct: ', test.correct);
-			if (test.correct) {
-		trace('the correct selection was made');
-		// remove event listener
-		
-		// go to next slide
-			nextSlide(ev);
-		
-			} // endif
-		trace('the incorrect selection was made');
-			
-			
-			//after checking answer and deciding to move on
-		} // end function checkAnswer
-		
-		
+			var test:answer_mc = answer_mc(ev.currentTarget); // turn the yarget into a movie clip
+			sorry_mc.visible = false; // turn off the sorry screen in case it is on
+			if (test.correct) { // if this is the correct answer
+				// go to next slide
+				nextSlide(ev);
+				} else {  // endif otherwise
+					// turn on the error screen
+					sorry_mc.visible = true;
+					} // end else
+				} // end function checkAnswer
 		
 	} // end class quiz_doc
 	
