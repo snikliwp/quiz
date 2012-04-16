@@ -1,6 +1,7 @@
 ﻿package  {
 	
 	import flash.display.MovieClip;
+	import flash.display.LoaderInfo;
 	import flash.net.URLRequest;		// Go get the xml file
 	import flash.net.URLLoader;			// Load the xml file
 	import flash.events.Event;			// when files finish loading
@@ -35,8 +36,9 @@
 			// constructor code
 			sorry_mc.visible = false;
 			gameOver_mc.visible = false;
+			var paramObj:Object = LoaderInfo(this.root.loaderInfo).parameters.xmlfile;
 			
-			req = new URLRequest(quizFileXML);									// Set up to get the xml data 
+			req = new URLRequest(paramObj.toString());									// Set up to get the xml data 
 			xmlLoader = new URLLoader();										// Set up to get the images
 			xmlLoader.addEventListener(Event.COMPLETE, getData);				// Event Listener for successful Completion
 			xmlLoader.addEventListener(IOErrorEvent.IO_ERROR, xmlError);		// Event Listener for some Sort of IO Error
@@ -112,7 +114,7 @@
 					ab.answerText.width = 470;
 					ab.answerText.height = 30;
 					ab.x = 15;
-					ab.y = yPos + 45; // move the y position down a bit 
+					ab.y = yPos + 15; // move the y position down a bit 
 					yPos = ab.y; // update the y position
 					ttf.size = 20;
 					ab.answerText.setTextFormat(ttf);
