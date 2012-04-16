@@ -9,6 +9,7 @@
 	import flash.events.HTTPStatusEvent;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
+	import flash.media.Sound;
 
 	
 	public class quiz_doc extends MovieClip {
@@ -24,6 +25,10 @@
 		private var correct:String = 'a';
 		private var pages:Array = new Array();
 		private var yPos:Number = 0;
+		private var ahh:Sound = new Ahh();
+		private var hooray:Sound = new Hooray();
+		private var applause:Sound = new Applause();
+
 		
 		
 		public function quiz_doc() {
@@ -177,6 +182,8 @@
 					} // end if
 				} // end for
 				// turn on the end game page, it's all over now
+				applause.play();
+
 				gameOver_mc.visible = true;
 			} // end else
 } // end function xmlError
@@ -190,10 +197,12 @@
 			sorry_mc.visible = false; // turn off the sorry screen in case it is on
 			if (test.correct) { // if this is the correct answer
 				// go to next slide
+				hooray.play();
 				nextSlide(ev);
 				} else {  // endif otherwise
 					// turn on the error screen
 					sorry_mc.visible = true;
+					ahh.play();
 					} // end else
 				} // end function checkAnswer
 		
