@@ -1,7 +1,7 @@
 ﻿package  {
 	
 	import flash.display.MovieClip;
-	import flash.display.LoaderInfo;
+//	import flash.display.LoaderInfo;
 	import flash.net.URLRequest;		// Go get the xml file
 	import flash.net.URLLoader;			// Load the xml file
 	import flash.events.Event;			// when files finish loading
@@ -15,12 +15,13 @@
 	
 	public class quiz_doc extends MovieClip {
 
-		private var quizFileXML:String = "quiz.xml";					// name of the xml file
+		private var quizFileXML:String = "quiz.xml";				// name of the xml file
 		private var quizXML:XML;									// array to store the xml data
-		private	var req:URLRequest = new URLRequest();					// Set up to get the xml data 
-		private	var xmlLoader:URLLoader = new URLLoader();				// Set up to get the images
-		private	var numTitle:Number;	// number of title tags in the XML file
-		private	var numQuestion:Number;	// number of question tags in the XML file
+		private	var req:URLRequest = new URLRequest();				// Set up to get the xml data 
+		private	var xmlLoader:URLLoader = new URLLoader();			// Set up to get the images
+		
+		private	var numTitle:Number;								// number of title tags in the XML file
+		private	var numQuestion:Number;								// number of question tags in the XML file
 		private var titleText:TextField = new TextField();
 		private var titleFormat:TextFormat = new TextFormat();
 		private var correct:String = 'a';
@@ -36,9 +37,9 @@
 			// constructor code
 			sorry_mc.visible = false;
 			gameOver_mc.visible = false;
-			var paramObj:Object = LoaderInfo(this.root.loaderInfo).parameters.xmlfile;
-			
-			req = new URLRequest(paramObj.toString());									// Set up to get the xml data 
+//			var paramObj:Object = LoaderInfo(this.root.loaderInfo).parameters.xmlfile;
+			req = new URLRequest(quizFileXML);	
+			// Set up to get the xml data 
 			xmlLoader = new URLLoader();										// Set up to get the images
 			xmlLoader.addEventListener(Event.COMPLETE, getData);				// Event Listener for successful Completion
 			xmlLoader.addEventListener(IOErrorEvent.IO_ERROR, xmlError);		// Event Listener for some Sort of IO Error
